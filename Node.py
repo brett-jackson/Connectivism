@@ -31,6 +31,7 @@ class DirectedNode(Node):
         elif typing=='tuple':
             adjnode[0].outbound[str(self.nid)]=adjnode[1]
             self.inbound[str(adjnode[0].nid)]=adjnode[1]
+        return adjnode
     def __gt__(self,adjnode):
         typing = adjnode.__class__.__name__
         if typing=='DirectedNode':
@@ -39,6 +40,11 @@ class DirectedNode(Node):
         elif typing=='tuple':
             self.outbound[str(adjnode[0].nid)]=adjnode[1]
             adjnode[0].inbound[str(self.nid)]=adjnode[1]
+        return adjnode
+    def __eq__(self,adjnode):
+        self>adjnode
+        adjnode>self
+        return adjnode
             
 class UndirectedNode(Node):
     def __init__(self,nid=0,value=0):
@@ -55,5 +61,6 @@ class UndirectedNode(Node):
         elif typing=='tuple':
             adjnode[0].adjacent[str(self.nid)]=adjnode[1]
             self.adjacent[str(adjnode[0].nid)]=adjnode[1]
+        return adjnode
         
         
