@@ -1,25 +1,31 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Jan 10 19:23:05 2020
-Generalized node class
+Generalized node class supporting both undirected and directed graphs.
 @author: Brett
 """
 
 class Node:
-    def __init__(self,nid=None,value=None):
+    def __init__(self,nid=0,value=0):
         self.nid = nid
         self.value = value
-        self.outbound = {}
-        self.inbound = {}
+        
     def data(self):
         print('ID: ' + str(self.nid))
         print('Value: ' + str(self.value))
+        
+class DirectedNode(Node):
+    def __init__(self,nid=0,value=0):
+        super().__init__(nid,value)
+        self.outbound = {}
+        self.inbound = {}
+    def data(self):
+        super().data()
         print('Out: ' + str(self.outbound))
         print('In: ' + str(self.inbound))
-        print()
     def __lt__(self,adjnode):
         typing = adjnode.__class__.__name__
-        if typing=='Node':
+        if typing=='DirectedNode':
             adjnode.outbound[str(self.nid)]=None
             self.inbound[str(adjnode.nid)]=None
         elif typing=='tuple':
@@ -27,18 +33,27 @@ class Node:
             self.inbound[str(adjnode[0].nid)]=adjnode[1]
     def __gt__(self,adjnode):
         typing = adjnode.__class__.__name__
-        if typing=='Node':
+        if typing=='DirectedNode':
             self.outbound[str(adjnode.nid)]=None
             adjnode.inbound[str(self.nid)]=None
         elif typing=='tuple':
             self.outbound[str(adjnode[0].nid)]=adjnode[1]
             adjnode[0].inbound[str(self.nid)]=adjnode[1]
+            
+class UndirectedNode(Node):
+    def __init__(self,nid=0,value=0):
+        super().__init__(nid,value)
+        self.adjacent = {}
+    def data(self):
+        super().data()
+        print('Connections: ' + str(self.adjacent))
+    def __eq__(self,adjnode):
+        typing = adjnode.__class__.__name__
+        if typing=='UndirectedNode':
+            adjnode.adjacent[str(self.nid)]=None
+            self.adjacent[str(adjnode.nid)]=None
+        elif typing=='tuple':
+            adjnode[0].adjacent[str(self.nid)]=adjnode[1]
+            self.adjacent[str(adjnode[0].nid)]=adjnode[1]
         
         
-if __name__ == '__main__':
-    a = Node('a',1)
-    b = Node('b',1)
-    a<(b,1)
-    a>(b,3)
-    a.data()
-    b.data()
