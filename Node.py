@@ -11,6 +11,7 @@ class Node:
         self.value = value
         
     def data(self):
+        print()
         print('ID: ' + str(self.nid))
         print('Value: ' + str(self.value))
         
@@ -23,28 +24,33 @@ class DirectedNode(Node):
         super().data()
         print('Out: ' + str(self.outbound))
         print('In: ' + str(self.inbound))
-    def __lt__(self,adjnode):
+        print()
+    def __lshift__(self,adjnode):
         typing = adjnode.__class__.__name__
         if typing=='DirectedNode':
             adjnode.outbound[str(self.nid)]=None
             self.inbound[str(adjnode.nid)]=None
+            return adjnode
         elif typing=='tuple':
             adjnode[0].outbound[str(self.nid)]=adjnode[1]
             self.inbound[str(adjnode[0].nid)]=adjnode[1]
-        return adjnode
-    def __gt__(self,adjnode):
+            return adjnode[0]
+        elif typing=='list':
+            for node in adjnode:
+                self<<node
+    def __rshift__(self,adjnode):
         typing = adjnode.__class__.__name__
         if typing=='DirectedNode':
             self.outbound[str(adjnode.nid)]=None
             adjnode.inbound[str(self.nid)]=None
+            return adjnode
         elif typing=='tuple':
             self.outbound[str(adjnode[0].nid)]=adjnode[1]
             adjnode[0].inbound[str(self.nid)]=adjnode[1]
-        return adjnode
-    def __eq__(self,adjnode):
-        self>adjnode
-        adjnode>self
-        return adjnode
+            return adjnode[0]
+        elif typing=='list':
+            for node in adjnode:
+                self>>node
             
 class UndirectedNode(Node):
     def __init__(self,nid=0,value=0):
@@ -53,14 +59,19 @@ class UndirectedNode(Node):
     def data(self):
         super().data()
         print('Connections: ' + str(self.adjacent))
-    def __eq__(self,adjnode):
+        print()
+    def __or__(self,adjnode):
         typing = adjnode.__class__.__name__
         if typing=='UndirectedNode':
             adjnode.adjacent[str(self.nid)]=None
             self.adjacent[str(adjnode.nid)]=None
+            return adjnode
         elif typing=='tuple':
             adjnode[0].adjacent[str(self.nid)]=adjnode[1]
             self.adjacent[str(adjnode[0].nid)]=adjnode[1]
-        return adjnode
+            return adjnode[0]
+        elif typing=='list':
+            for node in adjnode:
+                self|node
         
         
