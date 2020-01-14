@@ -14,6 +14,8 @@ class Node:
         print()
         print('ID: ' + str(self.nid))
         print('Value: ' + str(self.value))
+    def setVal(self,val):
+        self.value = val
         
 class DirectedNode(Node):
     def __init__(self,nid=0,value=0):
