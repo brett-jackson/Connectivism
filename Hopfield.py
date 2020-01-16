@@ -5,7 +5,6 @@ Hopfield network using node objects.
 @author: Brett
 """
 from Node import UndirectedNode as UN
-from random import uniform
 
 class Hopfield:
     def __init__(self,num,lr=0.1):
@@ -59,7 +58,23 @@ class Hopfield:
                 for adj in node.adjacent:
                     node.adjacent[adj]+=(1/n)*node.value*self.nodes[int(adj)].value
     def storkeyLearn(self,patterns):
-        return
+        if patterns[0].__class__.__name__ == 'list':
+            self.numPatterns+=len(patterns)
+        else:
+            self.numPatterns+=1
+            patterns = [patterns]
+        n = self.numPatterns
+        for p in range(n):
+            self.setVals(patterns[p])
+            unchanged = self.nodes.copy()
+            for index,node in enumerate(self.nodes):
+                prev = unchanged[index]
+                for adj in node.adjacent:
+                    second = self.nodes[int(adj)] #Connected node
+                    prev_second = unchanged[int(adj)]
+                    field_node = sum([prev.adjacent[k]*unchanged[int(k)].value for k in prev.adjacent if k is not adj])
+                    field_sec  = sum([prev_second.adjacent[k]*unchanged[int(k)].value for k in prev_second.adjacent if int(k) is not index])
+                    node.adjacent[adj]+=prev.adjacent[adj]+(1/n)*(node.value*second.value-node.value*field_sec-second.value*field_node)
     def forward(self,start,n=1):
         self.setVals(start)
         self.updateAsynch()
