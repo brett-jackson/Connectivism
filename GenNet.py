@@ -19,14 +19,29 @@ class GenNode(DirectedNode):
         self.backMean = 0
         self.backCount = 0
         self.act = actFunction
-        self.sema = asyncio.Semaphore()
-    def forward():
-        await self.sema.acquire()
-        try:
+        self.first = True
+        self.semaFirst = asyncio.Semaphore()
+        self.semaAll = asyncio.Semaphore(value=0)
+    def forward(self):
+        #Enter all threads
+        #Set value in
+        self.semaFirst.acquire() #decrement, starting at one
+        if self.first: #First thread
+            self.first = False
+            self.semaFirst.release() #increment, allowing additional threads
+            for inNode in range(len(self.inbound)):
+                self.semaAll.acquire() #decrement and block until 
+            #Calculate value
+            self.value = self.act()
+            #Forward nodes
+        else: #Second and subsequent threads
+            self.semaFirst.release()
+            self.semaAll.release()
+            return
             
-        finally:
-        inVal = 0
-        for node in self.inbound:
+            
+        
+#        for node in self.inbound:
             
 
 
